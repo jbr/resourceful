@@ -1,0 +1,40 @@
+8
+
+dir
+321
+svn://jacobrothstein.com/ideas/trunk/vendor/plugins/resourceful_loader/lib
+svn://jacobrothstein.com/ideas
+
+
+
+2009-03-23T10:12:44.723774Z
+208
+deploy
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+50c89c1e-9816-47d2-b55d-4d1851490e7b
+
+resourceful_loader.rb
+file
+
+
+
+
+2009-03-23T04:42:29.000000Z
+c80172da367aac188fbf733ccb85fe07
+2009-03-23T10:12:44.723774Z
+208
+deploy
+
