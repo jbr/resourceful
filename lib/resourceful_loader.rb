@@ -13,11 +13,16 @@ module ResourcefulLoader
       method_name = :"load_#{resource_name}"
       param_name = options.delete('by') || resource_name.foreign_key
       finder_method = (options.delete('method') || ResourcefulLoader.default_finder || "find_by_id").to_sym
+      
+      if_nil = options.delete("if_nil")
 
       self.class_eval do
         define_method(method_name) do
           return unless foreign_key = params[param_name]
           resource = block_given? ? yield(foreign_key) : resource_name.classify.constantize.send(finder_method, foreign_key)
+          if resource.nil? && if_nil && !if_nil.to_proc.call(self)
+            return false
+          end
           self.instance_variable_set :"@#{resource_name}", resource
         end
         private method_name
