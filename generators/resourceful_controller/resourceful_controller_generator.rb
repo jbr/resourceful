@@ -31,7 +31,7 @@ class ResourcefulControllerGenerator < Rails::Generator::NamedBase
         %w(create destroy update) => '.js.rjs'
       }.each do |views, format|
         views.each do |view|
-          view_filename = "#{view}{format}"
+          view_filename = "#{view}#{format}"
           path = File.join('app/views', class_path, file_name, view_filename)
           m.template File.join("views", view_filename), path
         end
