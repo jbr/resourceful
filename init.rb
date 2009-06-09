@@ -1,2 +1,2 @@
 ActionController::Base.send :include, ResourcefulLoader
-ActionController::Base.helper ResourcefulLoader::Helper
+ActionController::Base.helper ResourcefulHelper
