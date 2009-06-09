@@ -26,10 +26,15 @@ class ResourcefulControllerGenerator < Rails::Generator::NamedBase
                             class_path,
                             "#{file_name}_helper.rb")
 
-      %w(_form edit new show index).each do |view|
-        view_filename = "#{view}.html.haml"
-        path = File.join('app/views', class_path, file_name, view_filename)
-        m.template File.join("views", view_filename), path
+      {
+        %w(_form edit new show index _remote_edit _remote_new _remote_edit) => '.html.haml',
+        %w(create destroy update) => '.js.rjs'
+      }.each do |views, format|
+        views.each do |v|
+          view_filename = "#{view}{format}"
+          path = File.join('app/views', class_path, file_name, view_filename)
+          m.template File.join("views", view_filename), path
+        end
       end
       
       m.template File.join("views", "_object.html.haml"),
