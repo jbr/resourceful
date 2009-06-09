@@ -1,4 +1,4 @@
-module Helper
+module ResourcefulHelper
   def render_object_partial(object, options = {})
     singular = object.class.to_s.underscore
     plural = singular.pluralize
