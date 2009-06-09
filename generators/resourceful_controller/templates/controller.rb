@@ -17,27 +17,30 @@ class <%=class_name%>Controller < ApplicationController
   
   def update
     @success = @<%=file_name.singularize%>.update_attributes params[:<%=file_name.singularize%>]
-    
-    if @success
-      redirect_to @<%=file_name.singularize%>
-    else
-      render :action => :edit
+    respond_to do |format|
+      format.html do
+        @success ? redirect_to(<%=file_name.singularize%>_url(@<%=file_name.singularize%>)) : render(:action => :edit)
+      end
+      format.js
     end
   end
   
   def create
     @<%=file_name.singularize%> = <%=class_name.singularize%>.new params[:<%=file_name.singularize%>]
     @success = @<%=file_name.singularize%>.save
-    
-    if @success
-      redirect_to @<%=file_name.singularize%>
-    else
-      render :action => :new
+    respond_to do |format|
+      format.html do
+        @success ? redirect_to(<%=file_name.singularize%>_url(@<%=file_name.singularize%>)) : render(:action => :new)
+      end
+      format.js
     end
   end
   
   def destroy
     @<%=file_name.singularize%>.destroy
-    redirect_to <%=file_name%>_url
+    respond_to do |format|
+      format.html { redirect_to <%=file_name%>_url }
+      format.js
+    end
   end
 end

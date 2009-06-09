@@ -1,0 +1,5 @@
+page <<<<-END_JS
+  $(#{render_object_partial @<%=filename.singularize%>, :to => :json})
+    .appendTo('#<%=filename.pluralize%>')
+    .appear('blind');
+END_JS

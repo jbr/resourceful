@@ -6,6 +6,10 @@ module ResourcefulLoader
     end
   end
 
+  def element_id
+    [self.class.name.underscore, to_param.blank?? "new" : to_param].join '_'
+  end
+
   module ClassMethods
     def load_resource(resource_name, options = {})
       options.stringify_keys!
@@ -28,6 +32,22 @@ module ResourcefulLoader
         private method_name
 
         before_filter method_name, options
+      end
+    end
+  end
+  
+  module Helper
+    def render_object_partial(object, options = {})
+      singular = object.class.to_s.underscore
+      plural = singular.pluralize
+      to = options.delete :to
+      render_options = {:partial => "#{plural}/#{singular}", :locals => {singular.to_sym => object}.merge(options)}
+
+      if to
+        string = controller.send(:render_to_string, render_options)
+        to.to_sym == :json ? string.to_json : string
+      else
+        render render_options
       end
     end
   end
