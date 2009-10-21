@@ -68,13 +68,13 @@ h3. @:by@
 
 The parameter that identifies your record.  @:by => :id@ would @find_by_id(params[:id])@.
 
-This defaults to "#{the underscored name of your class}_id".  Specify @:by => :id@ for a primary resource.
+This defaults to @"#{the underscored name of your class}_id"@.  Specify @:by => :id@ for a primary resource.
 
 h3. @:method@
 
 The method by which you'd like to find your record.  @:method => :find_by_title@.
 
-This defaults to ResourcefulLoader.default_finder, which can be set in an initializer.  By default, this is @:find_by_id@.
+This defaults to @ResourcefulLoader.default_finder@, which can be set in an initializer.  By default, this is @:find_by_id@.
 
 ResourcefulLoader plays nicely with "UrlParam":http://github.com/jbr/url_param, which changes the default finder to @:find_by_param@, allowing you to specify the finder on the model.
 
@@ -130,7 +130,7 @@ ResourcefulLoader allows you to have controllers that serve double-duty fairly e
   end
 </code></pre>
 
-This incurs no lookup cost in the un-nested-route.  ResourcefulLoader will not look in the database if the param is nil, allowing you to provide several alternative.
+This incurs no lookup cost for the irrelevant routes.  ResourcefulLoader will not look in the database if the param is nil, allowing you to provide several alternative.
 
 h2. Generator
 
