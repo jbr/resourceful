@@ -76,7 +76,7 @@ The method by which you'd like to find your record.  @:method => :find_by_title@
 
 This defaults to ResourcefulLoader.default_finder, which can be set in an initializer.  By default, this is @:find_by_id@.
 
-ResourcefulLoader plays nicely with "UrlParam":http://github.com/jbr/url-param, which changes the default finder to @:find_by_param@, allowing you to specify the finder on the model.
+ResourcefulLoader plays nicely with "UrlParam":http://github.com/jbr/url_param, which changes the default finder to @:find_by_param@, allowing you to specify the finder on the model.
 
 h3. With a block
 
