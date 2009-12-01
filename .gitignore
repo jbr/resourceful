@@ -1,2 +1,6 @@
 .DS_Store
-**/.svn
+test/*.log
+vendor/gems/gems/*
+vendor/gems/specifications/*
+vendor/gems/doc/*
+vendor/gems/environment.rb

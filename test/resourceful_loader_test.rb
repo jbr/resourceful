@@ -1,5 +1,4 @@
 require File.instance_eval { expand_path join(dirname(__FILE__), 'test_helper') }
-require 'action_controller'
 require 'resourceful_loader'
 
 class Object
@@ -15,8 +14,6 @@ end
 class Foo; end
 
 class ResourcefulLoaderTest < Test::Unit::TestCase
-  include FlexMock::TestCase
-
   context "A blank AC:B" do
     should 'have a #load_resource class method' do
       assert BlankController.respond_to?(:load_resource)
@@ -24,7 +21,7 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
   end
   
   context 'With a controller that has a basic load_resource macro' do
-    before do
+    setup do
       @controller = BlankController.new
       @controller.eigenclass.load_resource :foo
     end
@@ -48,13 +45,13 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
   end
   
   context 'With a controller that specifies some options' do
-    before do
+    setup do
       @controller = BlankController.new
       @filter_options = {"only" => [:some, :method, :names]}
       @controller.eigenclass.load_resource :foo, @filter_options.merge(:by => :id, :method => :find_by_searching)
     end
     
-    should 'pass the filter options except :by and :method through to before_filter' do
+    should 'pass the filter options except :by and :method through to setup_filter' do
       filter = @controller.eigenclass.filter_chain.detect {|filter| filter.method == :load_foo}
       assert_options @filter_options, filter
     end
@@ -68,7 +65,7 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
   end
   
   context 'with a block' do
-    before do
+    setup do
       @controller = BlankController.new
       @controller.eigenclass.load_resource :foo do |foo_param|
         "test response #{foo_param}"
