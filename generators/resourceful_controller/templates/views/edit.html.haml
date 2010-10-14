@@ -1,4 +1,0 @@
-- form_for @<%=file_name.singularize%> do |f|
-  = render :partial => '<%=file_name%>/form', :locals => {:f => f}
-  = f.submit 'Save Changes'
-= link_to "&times; Delete", <%=file_name.singularize%>_url(@<%=file_name.singularize%>), :method => :delete
