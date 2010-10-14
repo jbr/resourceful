@@ -1,14 +1,32 @@
 require File.instance_eval { expand_path join(dirname(__FILE__), 'test_helper') }
 require 'resourceful_loader'
 
-class Object
-  def eigenclass
-    class << self; self; end
+class BlankController < ActionController::Base
+  include ResourcefulLoader
+end
+
+class LoadsFoo < BlankController
+  load_resource :foo
+end
+
+class LoadsFooWithOptions < BlankController
+  load_resource :foo,
+                :by     => :id,
+                :method => :find_by_searching,
+                :only   => %w( some method names )
+end
+
+class LoadsFooWithABlock < BlankController
+  load_resource :foo do |param|
+    "test response #{param}"
   end
 end
 
-class BlankController < ActionController::Base
-  include ResourcefulLoader
+class LoadsFooTwice < BlankController
+  load_resource :foo, :by     => :id,
+                      :only   => :sometimes
+  load_resource :foo, :method => :loading,
+                      :except => :sometims
 end
 
 class Foo; end
@@ -22,12 +40,11 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
   
   context 'With a controller that has a basic load_resource macro' do
     setup do
-      @controller = BlankController.new
-      @controller.eigenclass.load_resource :foo
+      @controller = LoadsFoo.new
     end
 
     should 'append #load_foo on the before filters' do
-      assert @controller.eigenclass.before_filters.include?(:load_foo)
+      assert LoadsFoo.before_filters.include?('load_foo')
     end
     
     should 'define #load_foo' do
@@ -46,18 +63,19 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
   
   context 'With a controller that specifies some options' do
     setup do
-      @controller = BlankController.new
-      @filter_options = {"only" => [:some, :method, :names]}
-      @controller.eigenclass.load_resource :foo, @filter_options.merge(:by => :id, :method => :find_by_searching)
+      @controller = LoadsFooWithOptions.new
     end
     
     should 'pass the filter options except :by and :method through to setup_filter' do
-      filter = @controller.eigenclass.filter_chain.detect {|filter| filter.method == :load_foo}
-      assert_options @filter_options, filter
+      filter = LoadsFooWithOptions.filter_chain.detect do |filter|
+        filter.method == 'load_foo'
+      end
+
+      assert_options({:only => Set.new(%w(some method names))}, filter)
     end
     
     should 'call the method with params[options[:by]]' do
-      flexmock(@controller, :params => {:id => 'bar'})
+      flexmock @controller, :params => {:id => 'bar'}
       flexmock(Foo).should_receive(:find_by_searching).once.with('bar').and_return('wibble')
       @controller.send :load_foo
       assert_equal 'wibble', @controller.instance_variable_get(:@foo)
@@ -65,18 +83,26 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
   end
   
   context 'with a block' do
-    setup do
-      @controller = BlankController.new
-      @controller.eigenclass.load_resource :foo do |foo_param|
-        "test response #{foo_param}"
-      end
-    end
-    
+    setup { @controller = LoadsFooWithABlock.new }
     context 'load_foo' do
       should 'eval the block with params["foo_id"]' do
-        flexmock(@controller, :params => {'foo_id' => 'bar'})
+        flexmock @controller, :params => {'foo_id' => 'bar'}
         @controller.send :load_foo
-        assert_equal 'test response bar', @controller.instance_variable_get(:@foo)
+        assert_equal 'test response bar',
+                     @controller.instance_variable_get(:@foo)
+      end
+    end
+  end
+
+
+  context 'with two loads of the same resource' do
+    setup { @controller = LoadsFooTwice.new }
+    should 'define load_foo and load_foo_1' do
+      %w(load_foo load_foo_1).each do |expected_method|
+        assert LoadsFooTwice.filter_chain.detect {|filter|
+          filter.method == expected_method }
+
+        assert @controller.private_methods.include?(expected_method)
       end
     end
   end

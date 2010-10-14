@@ -1,6 +1,3 @@
 .DS_Store
+.bundle
 test/*.log
-vendor/gems/gems/*
-vendor/gems/specifications/*
-vendor/gems/doc/*
-vendor/gems/environment.rb
