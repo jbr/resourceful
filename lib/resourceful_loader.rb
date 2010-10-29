@@ -25,6 +25,8 @@ module ResourcefulLoader
 
       method_name = "load_#{resource_name}"
 
+      ivar_name = (options.delete(:as) || resource_name).to_s
+
       while private_instance_methods.include? method_name
         method_name.sub! /(?:_([0-9]+))?$/ do |f|
           "_#{ f.blank? ? 1 : f.to_i + 1 }"
@@ -46,7 +48,7 @@ module ResourcefulLoader
           return false
         end
     
-        instance_variable_set :"@#{resource_name}", resource
+        instance_variable_set :"@#{ivar_name}", resource
       end
 
       private method_name

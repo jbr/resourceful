@@ -29,6 +29,11 @@ class LoadsFooTwice < BlankController
                       :except => :sometims
 end
 
+class LoadsFooAsBar < BlankController
+  load_resource :foo, :as => :bar
+end
+
+
 class Foo; end
 
 class ResourcefulLoaderTest < Test::Unit::TestCase
@@ -94,6 +99,18 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
     end
   end
 
+  context 'when loading :as something else' do
+    setup { @controller = LoadsFooAsBar.new }
+    context 'load_foo' do
+      should 'save the resource as @bar' do
+        flexmock @controller, :params => {'foo_id' => 'id'}
+        flexmock(Foo).should_receive(:find_by_id).once.with('id').and_return('wibble')
+
+        @controller.send :load_foo
+        assert_equal 'wibble', @controller.instance_variable_get(:@bar)
+      end
+    end
+  end
 
   context 'with two loads of the same resource' do
     setup { @controller = LoadsFooTwice.new }
