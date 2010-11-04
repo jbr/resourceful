@@ -48,6 +48,14 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
       @controller = LoadsFoo.new
     end
 
+    should 'have an attr accessor foo' do
+      assert @controller.respond_to?(:foo=)
+      assert @controller.respond_to?(:foo)
+
+      @controller.foo = 1
+      assert_equal 1, @controller.foo
+    end
+
     should 'append #load_foo on the before filters' do
       assert LoadsFoo.before_filters.include?('load_foo')
     end
@@ -55,13 +63,25 @@ class ResourcefulLoaderTest < Test::Unit::TestCase
     should 'define #load_foo' do
       assert @controller.private_methods.include?("load_foo")
     end
-    
+
+    context 'on call to load_foo when @foo is set' do
+      setup {@controller.foo = 27}
+      should 'not change @foo' do
+        flexmock(@controller, :params => {'foo_id' => 'bar'})
+        flexmock(Foo, :find_by_id => 'wibble')
+        @controller.send :load_foo
+        assert_equal 27, @controller.instance_variable_get(:@foo)
+        assert_equal 27, @controller.foo
+      end
+    end
+
     context 'on call to load_foo' do
       should 'call Foo.find_by_id(params[:foo])' do
         flexmock(@controller, :params => {'foo_id' => 'bar'})
         flexmock(Foo).should_receive(:find_by_id).once.with('bar').and_return('wibble')
         @controller.send :load_foo
         assert_equal 'wibble', @controller.instance_variable_get(:@foo)
+        assert_equal 'wibble', @controller.foo
       end
     end
   end

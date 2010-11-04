@@ -26,6 +26,7 @@ module ResourcefulLoader
       method_name = "load_#{resource_name}"
 
       ivar_name = (options.delete(:as) || resource_name).to_s
+      attr_accessor ivar_name
 
       while private_instance_methods.include? method_name
         method_name.sub! /(?:_([0-9]+))?$/ do |f|
@@ -47,8 +48,8 @@ module ResourcefulLoader
         if resource.nil? && if_nil && !if_nil.to_proc.call(self)
           return false
         end
-    
-        instance_variable_set :"@#{ivar_name}", resource
+
+        send("#{ivar_name}=", resource) unless send(ivar_name)
       end
 
       private method_name

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "resourceful_loader"
-  s.version     = "0.0.2"
+  s.version     = "0.0.3"
   s.platform    = Gem::Platform::RUBY
   s.authors     = %w( jbr )
   s.email       = %w( gems@jacobrothstein.com )
